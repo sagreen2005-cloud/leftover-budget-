@@ -135,8 +135,53 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    @media (min-width: 1200px) {
+      main {
+        padding: 22px;
+        max-width: 1800px;
+        margin: 0 auto;
+      }
+
+      .grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        padding: 22px;
+        border-radius: 20px;
+      }
+
+      .big {
+        font-size: 46px;
+      }
+
+      h1 { font-size: 34px; }
+      h2 { font-size: 28px; }
+      h3 { font-size: 22px; }
+
+      button, input, select, textarea {
+        font-size: 18px;
+        padding: 13px;
+      }
+
+      th, td {
+        font-size: 17px;
+        padding: 13px;
+      }
+
+      .tabs {
+        gap: 12px;
+        padding: 14px 22px;
+      }
+
+      .tab {
+        padding: 13px 18px;
+      }
     }
 
     .wide-grid {
@@ -371,7 +416,9 @@
         <h2>Income</h2>
         <div class="form-grid">
           <input id="incomeName" placeholder="Income name" />
-          <input id="incomeAmount" type="number" step="0.01" placeholder="Amount" />
+          <input id="incomeHours" type="number" step="0.01" placeholder="Hours" />
+          <input id="incomeRate" type="number" step="0.01" placeholder="Pay rate" />
+          <input id="incomeTax" type="number" step="0.01" placeholder="Tax % withheld" />
           <select id="incomeType">
             <option>Regular Paycheck</option>
             <option>OT</option>
@@ -449,6 +496,7 @@
           <input id="debtBalance" type="number" step="0.01" placeholder="Balance" />
           <input id="debtPayment" type="number" step="0.01" placeholder="Monthly payment" />
           <input id="debtRate" type="number" step="0.01" placeholder="Interest % optional" />
+          <input id="debtPayoffDate" type="date" />
           <button class="primary" onclick="addDebt()">Add Debt</button>
         </div>
         <div id="debtList"></div>
@@ -489,8 +537,8 @@
     const defaultData = {
       theme: "dark",
       income: [
-        { id: uid(), name: "Primary Paycheck", type: "Regular Paycheck", amount: 0 },
-        { id: uid(), name: "OT / Extra", type: "OT", amount: 0 }
+        { id: uid(), name: "Primary Paycheck", type: "Regular Paycheck", hours: 0, rate: 0, taxPercent: 0, amount: 0 },
+        { id: uid(), name: "OT / Extra", type: "OT", hours: 0, rate: 0, taxPercent: 0, amount: 0 }
       ],
       bills: [],
       categories: [
@@ -572,8 +620,23 @@
       document.body.classList.toggle("light", data.theme === "light");
     }
 
+    function calculateIncomeAmount(item) {
+      const hours = num(item.hours);
+      const rate = num(item.rate);
+      const taxPercent = num(item.taxPercent);
+      const grossFromHours = hours * rate;
+      const baseAmount = grossFromHours > 0 ? grossFromHours : num(item.amount);
+      const taxAmount = baseAmount * (taxPercent / 100);
+      return Math.max(0, baseAmount - taxAmount);
+    }
+
+    function calculateGrossIncome(item) {
+      const grossFromHours = num(item.hours) * num(item.rate);
+      return grossFromHours > 0 ? grossFromHours : num(item.amount);
+    }
+
     function totals() {
-      const income = data.income.reduce((sum, item) => sum + num(item.amount), 0);
+      const income = data.income.reduce((sum, item) => sum + calculateIncomeAmount(item), 0);
       const bills = data.bills.reduce((sum, item) => sum + num(item.amount), 0);
       const spendingBudget = data.categories.reduce((sum, item) => sum + num(item.budget), 0);
       const actualSpent = data.transactions.reduce((sum, item) => sum + num(item.amount), 0);
@@ -620,11 +683,16 @@
 
     function addIncome() {
       const name = incomeName.value.trim();
-      const amount = num(incomeAmount.value);
-      if (!name || amount <= 0) return alert("Enter an income name and amount.");
-      data.income.push({ id: uid(), name, amount, type: incomeType.value });
+      const hours = num(incomeHours.value);
+      const rate = num(incomeRate.value);
+      const taxPercent = num(incomeTax.value);
+      const amount = hours * rate;
+      if (!name || amount <= 0) return alert("Enter an income name, hours, and pay rate.");
+      data.income.push({ id: uid(), name, hours, rate, taxPercent, amount, type: incomeType.value });
       incomeName.value = "";
-      incomeAmount.value = "";
+      incomeHours.value = "";
+      incomeRate.value = "";
+      incomeTax.value = "";
       saveData();
     }
 
@@ -680,11 +748,12 @@
       const name = debtName.value.trim();
       const balance = num(debtBalance.value);
       if (!name || balance < 0) return alert("Enter a debt name and balance.");
-      data.debts.push({ id: uid(), name, balance, payment: num(debtPayment.value), rate: num(debtRate.value) });
+      data.debts.push({ id: uid(), name, balance, payment: num(debtPayment.value), rate: num(debtRate.value), payoffDate: debtPayoffDate.value || "" });
       debtName.value = "";
       debtBalance.value = "";
       debtPayment.value = "";
       debtRate.value = "";
+      debtPayoffDate.value = "";
       saveData();
     }
 
@@ -721,7 +790,7 @@
     function updateItem(collection, id, field, value) {
       const item = data[collection].find(row => row.id === id);
       if (!item) return;
-      item[field] = ["amount", "budget", "balance", "payment", "rate", "value", "target", "saved", "due"].includes(field) ? num(value) : value;
+      item[field] = ["amount", "budget", "balance", "payment", "rate", "value", "target", "saved", "due", "hours", "rate", "taxPercent"].includes(field) ? num(value) : value;
       saveData();
     }
 
@@ -869,12 +938,16 @@
         return;
       }
       incomeList.innerHTML = `
-        <table><thead><tr><th>Name</th><th>Type</th><th>Amount</th><th></th></tr></thead><tbody>
+        <table><thead><tr><th>Name</th><th>Type</th><th>Hours</th><th>Rate</th><th>Tax %</th><th>Gross</th><th>Net Income</th><th></th></tr></thead><tbody>
         ${data.income.map(item => `
           <tr>
             <td><input value="${escapeHtml(item.name)}" onchange="updateItem('income','${item.id}','name',this.value)"></td>
             <td><input value="${escapeHtml(item.type)}" onchange="updateItem('income','${item.id}','type',this.value)"></td>
-            <td><input type="number" step="0.01" value="${item.amount}" onchange="updateItem('income','${item.id}','amount',this.value)"></td>
+            <td><input type="number" step="0.01" value="${num(item.hours)}" onchange="updateItem('income','${item.id}','hours',this.value)"></td>
+            <td><input type="number" step="0.01" value="${num(item.rate)}" onchange="updateItem('income','${item.id}','rate',this.value)"></td>
+            <td><input type="number" step="0.01" value="${num(item.taxPercent)}" onchange="updateItem('income','${item.id}','taxPercent',this.value)"></td>
+            <td>${money(calculateGrossIncome(item))}</td>
+            <td class="green">${money(calculateIncomeAmount(item))}</td>
             <td><button class="mini-btn danger" onclick="deleteItem('income','${item.id}')">Delete</button></td>
           </tr>`).join("")}
         </tbody></table>`;
@@ -944,13 +1017,14 @@
         return;
       }
       debtList.innerHTML = `
-        <table><thead><tr><th>Debt</th><th>Balance</th><th>Payment</th><th>Rate</th><th></th></tr></thead><tbody>
+        <table><thead><tr><th>Debt</th><th>Balance</th><th>Payment</th><th>Rate</th><th>Payoff Date</th><th></th></tr></thead><tbody>
         ${data.debts.map(item => `
           <tr>
             <td><input value="${escapeHtml(item.name)}" onchange="updateItem('debts','${item.id}','name',this.value)"></td>
             <td><input type="number" step="0.01" value="${item.balance}" onchange="updateItem('debts','${item.id}','balance',this.value)"></td>
             <td><input type="number" step="0.01" value="${item.payment}" onchange="updateItem('debts','${item.id}','payment',this.value)"></td>
             <td><input type="number" step="0.01" value="${item.rate || 0}" onchange="updateItem('debts','${item.id}','rate',this.value)"></td>
+            <td><input type="date" value="${item.payoffDate || ""}" onchange="updateItem('debts','${item.id}','payoffDate',this.value)"></td>
             <td><button class="mini-btn danger" onclick="deleteItem('debts','${item.id}')">Delete</button></td>
           </tr>`).join("")}
         </tbody></table>`;
