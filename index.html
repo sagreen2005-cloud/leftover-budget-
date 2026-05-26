@@ -472,38 +472,26 @@
     <div>
       <div class="title-row">
         <h1 id="appTitleDisplay">Family Budget</h1>
-        <button class="mini-btn" onclick="editAppTitle()">Edit Title</button>
-      </div>
+        <button class="mini-btn" onclick="window.editAppTitle()"   </div>
       <div class="date-line" id="dateLine"></div>
     </div>
     <div class="top-actions">
-      <button onclick="toggleTheme()">Day/Night</button>
-      <button onclick="exportData()">Export</button>
-      <button onclick="document.getElementById('importFile').click()">Import</button>
-      <input id="importFile" type="file" accept="application/json" style="display:none" onchange="importData(event)" />
+      <button >Day/Night</button>
+    onclick="window.toggleTheme()"rtData()">Export< onclick="documenonclick="window.exportData()"rtFile').click()">Impccept="application/json" style="display:none" onchange="importData(event)" />
       <button class="danger" onclick="resetData()">Reset</button>
     </div>
-  </header>
-
-  <nav class="tabs">
-    <button class="tab active" data-tab="dashboard" onclick="showTab('dashboard', this)">Dashboard</button>
-    <button class="tab spending-shortcut" data-tab="spending" onclick="showTab('spending', this)">Spending</button>
-    <button class="tab" data-tab="income" onclick="showTab('income', this)">Income</button>
-    <button class="tab" data-tab="bills" onclick="showTab('bills', this)">Bills</button>
-    <button class="tab" data-tab="debt" onclick="showTab('debt', this)">Debt</button>
-    <button class="tab" data-tab="networth" onclick="showTab('networth', this)">Net Worth</button>
-    <button class="tab" data-tab="goals" onclick="showTab('goals', this)">Goals</button>
+  </h
+    <buttonchange="window.importData(event)"ab="dashboard" onclick="showTa>Daonclick="window.resetData()"<button class="tab spending-shortcut" data-tab="spending" onclick="showTab('spending', this)">Spending</button>
+ onclick="window.showTab('dashboard', this)")">Income</button>
+    <button class="tab" data-tab="bills" onclick="showTab('billonclick="window.showTab('spending', this)"on clasowTab('debt', this)">Debt</button>
+    <button class="onclick="window.showTab('income', this)""showTab('networ  <button class="tab" data-tab="goals" onconclick="window.showTab('bills', this)"als</button>
   </nav>
 
-  <main>
-    <section id="dashboard" class="section active">
-      <div class="mobile-quick-actions">
-        <button class="primary mobile-spend-button" onclick="openSpendingTab()">Add Spending</button>
-      </div>
-      <div class="grid dashboard-grid">
-        <div class="card"><div class="card-title">Monthly Income</div><div id="dashIncome" class="big green">$0.00</div></div>
-        <div class="card optional-mobile"><div class="card-title">Bills Total</div><div id="dashBills" class="big red">$0.00</div></div>
-        <div class="card optional-mobile"><div class="card-title">Spending Budget</div><div id="dashSpendingBudget" class="big yellow">$0.00</div></div>
+ rd" class="section active">
+    onclick="window.showTab('debt', this)"ons">
+        <button class="prick="openSpendingTab()">Add onclick="window.showTab('networth', this)"  <div class="grid dashboard-grid">ss="card-title">Monthly Inonclick="window.showTab('goals', this)"lass="big green">$0.00</div></div>
+        <d<div class="card-title">Bills Total</div><div id="dashBills" class="big red">$0.00</div></div>
+        <div class="card optional-mobileonclick="window.openSpendingTab()"pending Budget</div><div id="dashSpendingBudget" class="b>
         <div class="card"><div class="card-title">Actual Spent</div><div id="dashActualSpent" class="big red">$0.00</div></div>
         <div class="card"><div class="card-title">True Left Over</div><div id="dashLeftOver" class="big green">$0.00</div></div>
         <div class="card optional-mobile"><div class="card-title">Net Worth</div><div id="dashNetWorth" class="big green">$0.00</div></div>
@@ -540,9 +528,7 @@
       <div class="card">
         <h2>Income</h2>
         <div class="form-grid">
-          <input id="incomeName" placeholder="Income name" />
-          <input id="incomeHours" type="number" step="0.01" placeholder="Hours" />
-          <input id="incomeRate" type="number" step="0.01" placeholder="Pay rate" />
+          <input id="incomeName" plaonclick="window.addTransactionFromQuick()" <input id="incomeHours" type="number" step="0.01" placeid="incomeRate" type="number" step="0.01" placeholder="Pay rate" />
           <input id="incomeTax" type="number" step="0.01" placeholder="Tax % withheld" />
           <select id="incomeType">
             <option>Regular Paycheck</option>
@@ -564,11 +550,9 @@
         <div class="form-grid">
           <input id="billName" placeholder="Bill name" />
           <input id="billAmount" type="number" step="0.01" placeholder="Amount" />
-          <input id="billDue" type="number" min="1" max="31" placeholder="Due day" />
-          <select id="billType">
+          <input id="billDue" type="number" min="1" max="31" placeholder="Due day" />onclick="window.addIncome()"="billType">
             <option>Mortgage/Rent</option>
-            <option>Utility</option>
-            <option>Insurance</option>
+            <option>U       <option>Insurance</option>
             <option>Vehicle</option>
             <option>Credit Card</option>
             <option>Subscription</option>
@@ -587,9 +571,8 @@
           <div class="form-grid">
             <select id="transactionCategory"></select>
             <input id="transactionAmount" type="number" step="0.01" placeholder="Amount" />
-            <input id="transactionNote" placeholder="Store / note" />
-            <input id="transactionDate" type="date" />
-            <button class="primary" onclick="addTransactionFromForm()">Add Transaction</button>
+            <input id="transactionNote" placeholder="Stoonclick="window.addBill()"       <input id="transactionDate" type="date" />
+            <button class="primary" tionFromForm()">Add Transaction</button>
           </div>
           <div id="spendingCategoryCards" class="grid"></div>
         </div>
@@ -599,13 +582,11 @@
             <input id="categoryName" placeholder="Category name" />
             <input id="categoryBudget" type="number" step="0.01" placeholder="Monthly budget" />
             <button class="primary" onclick="addCategory()">Add Category</button>
-          </div>
-          <div id="categoryList"></div>
+          </divonclick="window.addTransactionFromForm()"></div>
         </div>
       </div>
 
-      <div class="card" style="margin-top:12px;">
-        <h2>Transactions</h2>
+      <div class="card" style="margin-top/h2>
         <div class="two-actions" style="margin-bottom:10px;">
           <button onclick="clearTransactionsOnly()">Clear Monthly Transactions</button>
         </div>
@@ -616,13 +597,12 @@
     <section id="debt" class="section">
       <div class="card">
         <h2>Debt</h2>
-        <div class="form-grid">
-          <input id="debtName" placeholder="Debt name" />
-          <input id="debtBalance" type="number" step="0.01" placeholder="Balance" />
+        <onclick="window.addCategory()"          <input id="debtName" placeholder="Debt name" />
+          <input id="debtBalance" typelaceholder="Balance" />
           <input id="debtPayment" type="number" step="0.01" placeholder="Monthly payment" />
-          <input id="debtRate" type="number" step="0.01" placeholder="Interest % optional" />
+          <input id="debtRate" type="number" step="0.01"onclick="window.clearTransactionsOnly()"" />
           <input id="debtPayoffDate" type="date" />
-          <button class="primary" onclick="addDebt()">Add Debt</button>
+          <button class="primary" onn>
         </div>
         <div id="debtList"></div>
       </div>
@@ -641,11 +621,10 @@
     </section>
 
     <section id="goals" class="section">
-      <div class="card">
-        <h2>Goals</h2>
+      <div class="conclick="window.addDebt()"oals</h2>
         <div class="form-grid">
           <input id="goalName" placeholder="Goal name" />
-          <input id="goalTarget" type="number" step="0.01" placeholder="Target" />
+          <inptype="number" step="0.01" placeholder="Target" />
           <input id="goalSaved" type="number" step="0.01" placeholder="Saved" />
           <button class="primary" onclick="addGoal()">Add Goal</button>
         </div>
@@ -653,11 +632,52 @@
       </div>
     </section>
 
-    <div class="footer-space"></div>
+    <donclick="window.addAsset()"ce"></div>
   </main>
 
-  <script>
-    const STORAGE_KEY = "greenLeftOverBudgetCommandCenter";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js";
+    import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCL8rajaj1pgiKX2Js4Gw1cG6XVB7WpdLI",
+      authDomain: "family-budgeonclick="window.addGoal()".com",
+      projectId: "family-budget-6cdd5",
+      storageBucket: "family-budget-6cdd5.firebasestorage.app",
+      messagingSe3",
+      appId:   <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js";
+    import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCL8rajaj1pgiKX2Js4Gw1cG6XVB7WpdLI",
+      authDomain: "family-budget-6cdd5.firebaseapp.com",
+      projectId: "family-budget-6cdd5",
+      storageBucket: "family-budget-6cdd5.firebasestorage.app",
+      messagingSenderId: "36968895033",
+      appId: "1:36968895033:web:616883febe3e4515fdf3e8",
+      measurementId: "G-4Y97QK1QPP"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(firebaseApp);
+    const db = getFirestore(firebaseApp);
+    const budgetDocRef = doc(db, "budgets", "family-budget");
+    let firebaseReady = false;
+
+    const STORAGE_KEY = "greenLeftOverBudgetCommandCenter";97QK1QPP"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(firebaseApp);
+    const db = getFirestore(firebaseApp);
+    const budgetDocRef = doc(db, "budgets", "family-budget");
+    let firebaseReady = false;
+    let unsubscribeBudget = null;
+
+    const STORAGE_KEY = "greenLeftOverBudgetComma
 
     const defaultData = {
       theme: "light",
@@ -679,9 +699,7 @@
       goals: []
     };
 
-    let data = loadData();
-
-    function uid() {
+    let dation uid() {
       return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
     }
 
@@ -696,9 +714,74 @@
           appTitle: parsed.appTitle || "Family Budget",
           income: parsed.income || [],
           bills: parsed.bills || [],
-          categories: parsed.categories || structuredClone(defaultData.categories),
-          transactions: parsed.transactions || [],
-          debts: parsed.debts || [],
+          categories: parsed.categories || structuredClon    async function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      render();
+
+      if (firebaseReady) {
+        try {
+          await setDoc(budgetDocRef, {
+            ...data,
+            updatedAt: new Date().toISOString()
+          });
+        } catch (error) {
+          console.error("Firebase save failed:", error);
+          alert("Firebase save failed. Your data is still saved on this device.");
+        }
+      }
+    }
+
+    async function startFirebaseSync() {
+      try {
+        const snapshot = await getDoc(budgetDocRef);
+
+        if (snapshot.exists()) {
+          const cloudData = snapshot.data();
+          data = {
+            ...structuredClone(defaultData),
+            ...cloudData,
+            income: cloudData.income || [],
+            bills: cloudData.bills || [],
+            categories: cloudData.categories || structuredClone(defaultData.categories),
+            transactions: cloudData.transactions || [],
+            debts: cloudData.debts || [],
+            assets: cloudData.assets || [],
+            goals: cloudData.goals || []
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          render();
+        } else {
+          await setDoc(budgetDocRef, {
+            ...data,
+            updatedAt: new Date().toISOString()
+          });
+        }
+
+        firebaseReady = true;
+
+        onSnapshot(budgetDocRef, (docSnapshot) => {
+          if (!docSnapshot.exists()) return;
+          const cloudData = docSnapshot.data();
+          data = {
+            ...structuredClone(defaultData),
+            ...cloudData,
+            income: cloudData.income || [],
+            bills: cloudData.bills || [],
+            categories: cloudData.categories || structuredClone(defaultData.categories),
+            transactions: cloudData.transactions || [],
+            debts: cloudData.debts || [],
+            assets: cloudData.assets || [],
+            goals: cloudData.goals || []
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          render();
+        });
+      } catch (error) {
+        console.error("Firebase sync failed:", error);
+        alert("Firebase sync failed. The app will keep saving on this device until Firebase is fixed.");
+        render();
+      }
+    } [],
           assets: parsed.assets || [],
           goals: parsed.goals || []
         };
@@ -709,12 +792,7 @@
     }
 
     function saveData() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      render();
-    }
-
-    function money(value) {
-      return Number(value || 0).toLocaleString("en-US", {
+      locareturn Number(value || 0).toLocaleString("en-US", {
         style: "currency",
         currency: "USD",
         minimumFractionDigits: 2,
@@ -1202,8 +1280,31 @@
               <td><input value="${escapeHtml(item.name)}" onchange="updateItem('goals','${item.id}','name',this.value)"></td>
               <td><input type="number" step="0.01" value="${item.target}" onchange="updateItem('goals','${item.id}','target',this.value)"></td>
               <td><input type="number" step="0.01" value="${item.saved}" onchange="updateItem('goals','${item.id}','saved',this.value)"></td>
-              <td class="${left >= 0 ? "yellow" : "green"}">${money(left)}</td>
-              <td><button class="mini-btn danger" onclick="deleteItem('goals','${item.id}')">Delete</button></td>
+              <td class="${left >= 0 ? "yellow" : "green"}">${mo    window.toggleTheme = toggleTheme;
+    window.editAppTitle = editAppTitle;
+    window.openSpendingTab = openSpendingTab;
+    window.showTab = showTab;
+    window.addIncome = addIncome;
+    window.addBill = addBill;
+    window.addCategory = addCategory;
+    window.addTransaction = addTransaction;
+    window.addTransactionFromQuick = addTransactionFromQuick;
+    window.addTransactionFromForm = addTransactionFromForm;
+    window.addDebt = addDebt;
+    window.addAsset = addAsset;
+    window.addGoal = addGoal;
+    window.deleteItem = deleteItem;
+    window.updateItem = updateItem;
+    window.toggleBillPaid = toggleBillPaid;
+    window.deleteTransaction = deleteTransaction;
+    window.clearTransactionsOnly = clearTransactionsOnly;
+    window.resetData = resetData;
+    window.exportData = exportData;
+    window.importData = importData;
+
+    render();
+    startFirebaseSync();
+  </script>     <td><button class="mini-btn danger" onclick="deleteItem('goals','${item.id}')">Delete</button></td>
             </tr>`;
         }).join("")}
         </tbody></table>`;
