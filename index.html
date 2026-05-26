@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LeftOver Budget Command Center</title>
+  <style>
+    :root {
+      --bg: #05070a;
+      --panel: #0f1722;
+      --panel-2: #152033;
+      --panel-3: #1d2a3c;
+      --text: #f8fafc;
+      --muted: #aab4c3;
+      --border: #2d3a4f;
+      --green: #18d957;
+      --red: #ef4444;
+      --yellow: #facc15;
+      --blue: #3b82f6;
+      --orange: #fb923c;
+      --shadow: rgba(0, 0, 0, 0.35);
+    }
+
+    body.light {
+      --bg: #eef2f7;
+      --panel: #ffffff;
+      --panel-2: #e8eef7;
+      --panel-3: #dbe5f1;
+      --text: #111827;
+      --muted: #4b5563;
+      --border: #cbd5e1;
+      --shadow: rgba(15, 23, 42, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--panel);
+      border-bottom: 2px solid var(--border);
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+
+    h1, h2, h3 { margin: 0; }
+
+    h1 { font-size: 26px; }
+    h2 { font-size: 22px; margin-bottom: 12px; }
+    h3 { font-size: 18px; margin-bottom: 8px; }
+
+    .date-line {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 3px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    button {
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    button:hover { opacity: 0.88; }
+
+    .primary { background: var(--blue); border-color: var(--blue); }
+    .danger { background: #7f1d1d; border-color: #991b1b; }
+    .success { background: #166534; border-color: #15803d; }
+    .warning { background: #854d0e; border-color: #a16207; }
+
+    input, select, textarea {
+      width: 100%;
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 10px;
+      outline: none;
+    }
+
+    input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--green);
+    }
+
+    .tabs {
+      position: sticky;
+      top: 70px;
+      z-index: 15;
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .tab {
+      white-space: nowrap;
+      min-width: fit-content;
+    }
+
+    .tab.active { background: var(--blue); border-color: var(--blue); }
+
+    main { padding: 14px; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+    }
+
+    .wide-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 8px 22px var(--shadow);
+    }
+
+    .card-title {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .big {
+      font-size: 34px;
+      line-height: 1.05;
+      font-weight: 800;
+    }
+
+    .green { color: var(--green); }
+    .red { color: var(--red); }
+    .yellow { color: var(--yellow); }
+    .blue { color: var(--blue); }
+    .orange { color: var(--orange); }
+    .muted { color: var(--muted); }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 12px;
+      background: var(--panel);
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .mini-btn {
+      padding: 7px 9px;
+      font-size: 13px;
+      border-radius: 8px;
+    }
+
+    .two-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 8px 0 0;
+    }
+
+    .pill {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 10px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .progress-wrap {
+      height: 12px;
+      background: var(--panel-3);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      transition: width 0.2s ease;
+    }
+
+    .progress-bar.warning-bar { background: var(--yellow); }
+    .progress-bar.danger-bar { background: var(--red); }
+
+    .category-card {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .category-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .category-name {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .quick-spend {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .empty {
+      color: var(--muted);
+      padding: 14px;
+      background: var(--panel-2);
+      border-radius: 12px;
+      border: 1px dashed var(--border);
+    }
+
+    .footer-space { height: 40px; }
+
+    @media (max-width: 900px) {
+      .wide-grid { grid-template-columns: 1fr; }
+      .tabs { top: 83px; }
+    }
+
+    @media (max-width: 650px) {
+      header { align-items: flex-start; flex-direction: column; }
+      h1 { font-size: 22px; }
+      .big { font-size: 28px; }
+      .tabs { top: 115px; }
+      th, td { font-size: 14px; padding: 8px; }
+      .quick-spend { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>LeftOver Budget Command Center</h1>
+      <div class="date-line" id="dateLine"></div>
+    </div>
+    <div class="top-actions">
+      <button onclick="toggleTheme()">Day/Night</button>
+      <button onclick="exportData()">Export</button>
+      <button onclick="document.getElementById('importFile').click()">Import</button>
+      <input id="importFile" type="file" accept="application/json" style="display:none" onchange="importData(event)" />
+      <button class="danger" onclick="resetData()">Reset</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="dashboard" onclick="showTab('dashboard', this)">Dashboard</button>
+    <button class="tab" data-tab="income" onclick="showTab('income', this)">Income</button>
+    <button class="tab" data-tab="bills" onclick="showTab('bills', this)">Bills</button>
+    <button class="tab" data-tab="spending" onclick="showTab('spending', this)">Spending</button>
+    <button class="tab" data-tab="debt" onclick="showTab('debt', this)">Debt</button>
+    <button class="tab" data-tab="networth" onclick="showTab('networth', this)">Net Worth</button>
+    <button class="tab" data-tab="goals" onclick="showTab('goals', this)">Goals</button>
+  </nav>
+
+  <main>
+    <section id="dashboard" class="section active">
+      <div class="grid">
+        <div class="card"><div class="card-title">Monthly Income</div><div id="dashIncome" class="big green">$0.00</div></div>
+        <div class="card"><div class="card-title">Bills Total</div><div id="dashBills" class="big red">$0.00</div></div>
+        <div class="card"><div class="card-title">Spending Budget</div><div id="dashSpendingBudget" class="big yellow">$0.00</div></div>
+        <div class="card"><div class="card-title">Actual Spent</div><div id="dashActualSpent" class="big red">$0.00</div></div>
+        <div class="card"><div class="card-title">True Left Over</div><div id="dashLeftOver" class="big green">$0.00</div></div>
+        <div class="card"><div class="card-title">Net Worth</div><div id="dashNetWorth" class="big green">$0.00</div></div>
+      </div>
+
+      <div class="wide-grid" style="margin-top:12px;">
+        <div class="card">
+          <h2>Monthly Money Map</h2>
+          <div class="big"><span id="formulaIncome">$0.00</span> - <span id="formulaBills">$0.00</span> - <span id="formulaBudget">$0.00</span> = <span id="formulaLeft" class="green">$0.00</span></div>
+          <div class="pill-row">
+            <div class="pill">Bills paid: <span id="paidBillCount">0</span>/<span id="totalBillCount">0</span></div>
+            <div class="pill">Unpaid bills: <span id="unpaidBills">$0.00</span></div>
+            <div class="pill">Spending left: <span id="spendingLeft">$0.00</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Fast Entry</h2>
+          <div class="form-grid">
+            <select id="quickCategory"></select>
+            <input id="quickAmount" type="number" step="0.01" placeholder="Amount spent" />
+            <input id="quickNote" placeholder="Store / note" />
+            <button class="primary" onclick="addTransactionFromQuick()">Add Spending</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <h2>Spending Buckets</h2>
+        <div id="dashboardCategories" class="grid"></div>
+      </div>
+    </section>
+
+    <section id="income" class="section">
+      <div class="card">
+        <h2>Income</h2>
+        <div class="form-grid">
+          <input id="incomeName" placeholder="Income name" />
+          <input id="incomeAmount" type="number" step="0.01" placeholder="Amount" />
+          <select id="incomeType">
+            <option>Regular Paycheck</option>
+            <option>OT</option>
+            <option>Secondary Job</option>
+            <option>Rental</option>
+            <option>Tax Prep</option>
+            <option>Other</option>
+          </select>
+          <button class="primary" onclick="addIncome()">Add Income</button>
+        </div>
+        <div id="incomeList"></div>
+      </div>
+    </section>
+
+    <section id="bills" class="section">
+      <div class="card">
+        <h2>Bills</h2>
+        <div class="form-grid">
+          <input id="billName" placeholder="Bill name" />
+          <input id="billAmount" type="number" step="0.01" placeholder="Amount" />
+          <input id="billDue" type="number" min="1" max="31" placeholder="Due day" />
+          <select id="billType">
+            <option>Mortgage/Rent</option>
+            <option>Utility</option>
+            <option>Insurance</option>
+            <option>Vehicle</option>
+            <option>Credit Card</option>
+            <option>Subscription</option>
+            <option>Other</option>
+          </select>
+          <button class="primary" onclick="addBill()">Add Bill</button>
+        </div>
+        <div id="billList"></div>
+      </div>
+    </section>
+
+    <section id="spending" class="section">
+      <div class="wide-grid">
+        <div class="card">
+          <h2>Spending Tracker</h2>
+          <div class="form-grid">
+            <select id="transactionCategory"></select>
+            <input id="transactionAmount" type="number" step="0.01" placeholder="Amount" />
+            <input id="transactionNote" placeholder="Store / note" />
+            <input id="transactionDate" type="date" />
+            <button class="primary" onclick="addTransactionFromForm()">Add Transaction</button>
+          </div>
+          <div id="spendingCategoryCards" class="grid"></div>
+        </div>
+        <div class="card">
+          <h2>Edit Buckets</h2>
+          <div class="form-grid">
+            <input id="categoryName" placeholder="Category name" />
+            <input id="categoryBudget" type="number" step="0.01" placeholder="Monthly budget" />
+            <button class="primary" onclick="addCategory()">Add Category</button>
+          </div>
+          <div id="categoryList"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <h2>Transactions</h2>
+        <div class="two-actions" style="margin-bottom:10px;">
+          <button onclick="clearTransactionsOnly()">Clear Monthly Transactions</button>
+        </div>
+        <div id="transactionList"></div>
+      </div>
+    </section>
+
+    <section id="debt" class="section">
+      <div class="card">
+        <h2>Debt</h2>
+        <div class="form-grid">
+          <input id="debtName" placeholder="Debt name" />
+          <input id="debtBalance" type="number" step="0.01" placeholder="Balance" />
+          <input id="debtPayment" type="number" step="0.01" placeholder="Monthly payment" />
+          <input id="debtRate" type="number" step="0.01" placeholder="Interest % optional" />
+          <button class="primary" onclick="addDebt()">Add Debt</button>
+        </div>
+        <div id="debtList"></div>
+      </div>
+    </section>
+
+    <section id="networth" class="section">
+      <div class="card">
+        <h2>Net Worth</h2>
+        <div class="form-grid">
+          <input id="assetName" placeholder="Asset name" />
+          <input id="assetValue" type="number" step="0.01" placeholder="Value" />
+          <button class="primary" onclick="addAsset()">Add Asset</button>
+        </div>
+        <div id="assetList"></div>
+      </div>
+    </section>
+
+    <section id="goals" class="section">
+      <div class="card">
+        <h2>Goals</h2>
+        <div class="form-grid">
+          <input id="goalName" placeholder="Goal name" />
+          <input id="goalTarget" type="number" step="0.01" placeholder="Target" />
+          <input id="goalSaved" type="number" step="0.01" placeholder="Saved" />
+          <button class="primary" onclick="addGoal()">Add Goal</button>
+        </div>
+        <div id="goalList"></div>
+      </div>
+    </section>
+
+    <div class="footer-space"></div>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "greenLeftOverBudgetCommandCenter";
+
+    const defaultData = {
+      theme: "dark",
+      income: [
+        { id: uid(), name: "Primary Paycheck", type: "Regular Paycheck", amount: 0 },
+        { id: uid(), name: "OT / Extra", type: "OT", amount: 0 }
+      ],
+      bills: [],
+      categories: [
+        { id: uid(), name: "Groceries", budget: 550 },
+        { id: uid(), name: "Fun", budget: 550 },
+        { id: uid(), name: "Misc", budget: 500 },
+        { id: uid(), name: "Gas", budget: 300 }
+      ],
+      transactions: [],
+      debts: [],
+      assets: [],
+      goals: []
+    };
+
+    let data = loadData();
+
+    function uid() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    }
+
+    function loadData() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (!stored) return structuredClone(defaultData);
+        const parsed = JSON.parse(stored);
+        return {
+          ...structuredClone(defaultData),
+          ...parsed,
+          income: parsed.income || [],
+          bills: parsed.bills || [],
+          categories: parsed.categories || structuredClone(defaultData.categories),
+          transactions: parsed.transactions || [],
+          debts: parsed.debts || [],
+          assets: parsed.assets || [],
+          goals: parsed.goals || []
+        };
+      } catch (error) {
+        console.error(error);
+        return structuredClone(defaultData);
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      render();
+    }
+
+    function money(value) {
+      return Number(value || 0).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function num(value) {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function todayIso() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function showTab(tabId, button) {
+      document.querySelectorAll(".section").forEach(section => section.classList.remove("active"));
+      document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+      document.getElementById(tabId).classList.add("active");
+      button.classList.add("active");
+    }
+
+    function toggleTheme() {
+      data.theme = data.theme === "light" ? "dark" : "light";
+      saveData();
+    }
+
+    function applyTheme() {
+      document.body.classList.toggle("light", data.theme === "light");
+    }
+
+    function totals() {
+      const income = data.income.reduce((sum, item) => sum + num(item.amount), 0);
+      const bills = data.bills.reduce((sum, item) => sum + num(item.amount), 0);
+      const spendingBudget = data.categories.reduce((sum, item) => sum + num(item.budget), 0);
+      const actualSpent = data.transactions.reduce((sum, item) => sum + num(item.amount), 0);
+      const debt = data.debts.reduce((sum, item) => sum + num(item.balance), 0);
+      const debtPayments = data.debts.reduce((sum, item) => sum + num(item.payment), 0);
+      const assets = data.assets.reduce((sum, item) => sum + num(item.value), 0);
+      const paidBills = data.bills.filter(item => item.paid);
+      const unpaidBillTotal = data.bills.filter(item => !item.paid).reduce((sum, item) => sum + num(item.amount), 0);
+      return {
+        income,
+        bills,
+        spendingBudget,
+        actualSpent,
+        spendingLeft: spendingBudget - actualSpent,
+        leftOver: income - bills - spendingBudget,
+        realTimeLeft: income - bills - actualSpent,
+        debt,
+        debtPayments,
+        assets,
+        netWorth: assets - debt,
+        paidBillCount: paidBills.length,
+        totalBillCount: data.bills.length,
+        unpaidBillTotal
+      };
+    }
+
+    function categorySpent(categoryId) {
+      return data.transactions
+        .filter(item => item.categoryId === categoryId)
+        .reduce((sum, item) => sum + num(item.amount), 0);
+    }
+
+    function percentUsed(spent, budget) {
+      if (!budget || budget <= 0) return 0;
+      return Math.min(100, Math.round((spent / budget) * 100));
+    }
+
+    function barClass(spent, budget) {
+      const pct = percentUsed(spent, budget);
+      if (pct >= 100) return "danger-bar";
+      if (pct >= 80) return "warning-bar";
+      return "";
+    }
+
+    function addIncome() {
+      const name = incomeName.value.trim();
+      const amount = num(incomeAmount.value);
+      if (!name || amount <= 0) return alert("Enter an income name and amount.");
+      data.income.push({ id: uid(), name, amount, type: incomeType.value });
+      incomeName.value = "";
+      incomeAmount.value = "";
+      saveData();
+    }
+
+    function addBill() {
+      const name = billName.value.trim();
+      const amount = num(billAmount.value);
+      const due = num(billDue.value);
+      if (!name || amount <= 0) return alert("Enter a bill name and amount.");
+      data.bills.push({ id: uid(), name, amount, due: due || "", type: billType.value, paid: false });
+      billName.value = "";
+      billAmount.value = "";
+      billDue.value = "";
+      saveData();
+    }
+
+    function addCategory() {
+      const name = categoryName.value.trim();
+      const budget = num(categoryBudget.value);
+      if (!name || budget < 0) return alert("Enter a category name and budget.");
+      data.categories.push({ id: uid(), name, budget });
+      categoryName.value = "";
+      categoryBudget.value = "";
+      saveData();
+    }
+
+    function addTransaction(categoryId, amount, note, date) {
+      if (!categoryId) return alert("Pick a category.");
+      if (num(amount) <= 0) return alert("Enter an amount spent.");
+      data.transactions.unshift({
+        id: uid(),
+        categoryId,
+        amount: num(amount),
+        note: note || "",
+        date: date || todayIso()
+      });
+      saveData();
+    }
+
+    function addTransactionFromQuick() {
+      addTransaction(quickCategory.value, quickAmount.value, quickNote.value.trim(), todayIso());
+      quickAmount.value = "";
+      quickNote.value = "";
+    }
+
+    function addTransactionFromForm() {
+      addTransaction(transactionCategory.value, transactionAmount.value, transactionNote.value.trim(), transactionDate.value || todayIso());
+      transactionAmount.value = "";
+      transactionNote.value = "";
+      transactionDate.value = todayIso();
+    }
+
+    function addDebt() {
+      const name = debtName.value.trim();
+      const balance = num(debtBalance.value);
+      if (!name || balance < 0) return alert("Enter a debt name and balance.");
+      data.debts.push({ id: uid(), name, balance, payment: num(debtPayment.value), rate: num(debtRate.value) });
+      debtName.value = "";
+      debtBalance.value = "";
+      debtPayment.value = "";
+      debtRate.value = "";
+      saveData();
+    }
+
+    function addAsset() {
+      const name = assetName.value.trim();
+      const value = num(assetValue.value);
+      if (!name || value < 0) return alert("Enter an asset name and value.");
+      data.assets.push({ id: uid(), name, value });
+      assetName.value = "";
+      assetValue.value = "";
+      saveData();
+    }
+
+    function addGoal() {
+      const name = goalName.value.trim();
+      const target = num(goalTarget.value);
+      if (!name || target <= 0) return alert("Enter a goal name and target.");
+      data.goals.push({ id: uid(), name, target, saved: num(goalSaved.value) });
+      goalName.value = "";
+      goalTarget.value = "";
+      goalSaved.value = "";
+      saveData();
+    }
+
+    function deleteItem(collection, id) {
+      if (!confirm("Delete this item?")) return;
+      data[collection] = data[collection].filter(item => item.id !== id);
+      if (collection === "categories") {
+        data.transactions = data.transactions.filter(item => item.categoryId !== id);
+      }
+      saveData();
+    }
+
+    function updateItem(collection, id, field, value) {
+      const item = data[collection].find(row => row.id === id);
+      if (!item) return;
+      item[field] = ["amount", "budget", "balance", "payment", "rate", "value", "target", "saved", "due"].includes(field) ? num(value) : value;
+      saveData();
+    }
+
+    function toggleBillPaid(id) {
+      const bill = data.bills.find(item => item.id === id);
+      if (!bill) return;
+      bill.paid = !bill.paid;
+      saveData();
+    }
+
+    function deleteTransaction(id) {
+      if (!confirm("Delete this transaction?")) return;
+      data.transactions = data.transactions.filter(item => item.id !== id);
+      saveData();
+    }
+
+    function clearTransactionsOnly() {
+      if (!confirm("Clear all spending transactions for this month? Your category budgets will remain.")) return;
+      data.transactions = [];
+      saveData();
+    }
+
+    function resetData() {
+      const pin = prompt("Enter reset PIN: 101617");
+      if (pin !== "101617") return alert("Wrong PIN.");
+      if (!confirm("This deletes all budget data in this browser. Continue?")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      data = structuredClone(defaultData);
+      render();
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `leftover-budget-${todayIso()}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const imported = JSON.parse(reader.result);
+          data = { ...structuredClone(defaultData), ...imported };
+          saveData();
+          alert("Budget imported.");
+        } catch (error) {
+          alert("That file could not be imported.");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    function categoryOptionsHtml(selectedId = "") {
+      return data.categories.map(cat => `<option value="${cat.id}" ${cat.id === selectedId ? "selected" : ""}>${escapeHtml(cat.name)}</option>`).join("");
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function renderTable(rows, emptyText) {
+      return rows.length ? rows : `<div class="empty">${emptyText}</div>`;
+    }
+
+    function render() {
+      applyTheme();
+      const total = totals();
+      dateLine.textContent = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+
+      dashIncome.textContent = money(total.income);
+      dashBills.textContent = money(total.bills);
+      dashSpendingBudget.textContent = money(total.spendingBudget);
+      dashActualSpent.textContent = money(total.actualSpent);
+      dashLeftOver.textContent = money(total.leftOver);
+      dashLeftOver.className = `big ${total.leftOver >= 0 ? "green" : "red"}`;
+      dashNetWorth.textContent = money(total.netWorth);
+      dashNetWorth.className = `big ${total.netWorth >= 0 ? "green" : "red"}`;
+      formulaIncome.textContent = money(total.income);
+      formulaBills.textContent = money(total.bills);
+      formulaBudget.textContent = money(total.spendingBudget);
+      formulaLeft.textContent = money(total.leftOver);
+      formulaLeft.className = total.leftOver >= 0 ? "green" : "red";
+      paidBillCount.textContent = total.paidBillCount;
+      totalBillCount.textContent = total.totalBillCount;
+      unpaidBills.textContent = money(total.unpaidBillTotal);
+      spendingLeft.textContent = money(total.spendingLeft);
+      spendingLeft.className = total.spendingLeft >= 0 ? "green" : "red";
+
+      quickCategory.innerHTML = categoryOptionsHtml();
+      transactionCategory.innerHTML = categoryOptionsHtml();
+      if (!transactionDate.value) transactionDate.value = todayIso();
+
+      dashboardCategories.innerHTML = data.categories.map(cat => renderCategoryCard(cat, false)).join("") || `<div class="empty">No spending categories yet.</div>`;
+      spendingCategoryCards.innerHTML = data.categories.map(cat => renderCategoryCard(cat, true)).join("") || `<div class="empty">Add your first spending bucket.</div>`;
+
+      renderIncome();
+      renderBills();
+      renderCategories();
+      renderTransactions();
+      renderDebt();
+      renderAssets();
+      renderGoals();
+    }
+
+    function renderCategoryCard(cat, allowQuickSpend) {
+      const spent = categorySpent(cat.id);
+      const left = num(cat.budget) - spent;
+      const pct = percentUsed(spent, num(cat.budget));
+      return `
+        <div class="card category-card">
+          <div class="category-head">
+            <div class="category-name">${escapeHtml(cat.name)}</div>
+            <div class="big ${left >= 0 ? "green" : "red"}">${money(left)}</div>
+          </div>
+          <div class="pill-row">
+            <div class="pill">Budget: ${money(cat.budget)}</div>
+            <div class="pill">Spent: ${money(spent)}</div>
+            <div class="pill">Used: ${pct}%</div>
+          </div>
+          <div class="progress-wrap"><div class="progress-bar ${barClass(spent, num(cat.budget))}" style="width:${pct}%"></div></div>
+          ${allowQuickSpend ? `
+            <div class="quick-spend">
+              <input id="spendAmount-${cat.id}" type="number" step="0.01" placeholder="Amount" />
+              <input id="spendNote-${cat.id}" placeholder="Store / note" />
+              <button class="primary" onclick="addTransaction('${cat.id}', document.getElementById('spendAmount-${cat.id}').value, document.getElementById('spendNote-${cat.id}').value, todayIso())">Spend</button>
+            </div>` : ""}
+        </div>`;
+    }
+
+    function renderIncome() {
+      if (!data.income.length) {
+        incomeList.innerHTML = `<div class="empty">No income entered.</div>`;
+        return;
+      }
+      incomeList.innerHTML = `
+        <table><thead><tr><th>Name</th><th>Type</th><th>Amount</th><th></th></tr></thead><tbody>
+        ${data.income.map(item => `
+          <tr>
+            <td><input value="${escapeHtml(item.name)}" onchange="updateItem('income','${item.id}','name',this.value)"></td>
+            <td><input value="${escapeHtml(item.type)}" onchange="updateItem('income','${item.id}','type',this.value)"></td>
+            <td><input type="number" step="0.01" value="${item.amount}" onchange="updateItem('income','${item.id}','amount',this.value)"></td>
+            <td><button class="mini-btn danger" onclick="deleteItem('income','${item.id}')">Delete</button></td>
+          </tr>`).join("")}
+        </tbody></table>`;
+    }
+
+    function renderBills() {
+      if (!data.bills.length) {
+        billList.innerHTML = `<div class="empty">No bills entered.</div>`;
+        return;
+      }
+      const sorted = [...data.bills].sort((a, b) => num(a.due) - num(b.due));
+      billList.innerHTML = `
+        <table><thead><tr><th>Paid</th><th>Bill</th><th>Type</th><th>Amount</th><th>Due</th><th></th></tr></thead><tbody>
+        ${sorted.map(item => `
+          <tr>
+            <td><input type="checkbox" ${item.paid ? "checked" : ""} onchange="toggleBillPaid('${item.id}')"></td>
+            <td><input value="${escapeHtml(item.name)}" onchange="updateItem('bills','${item.id}','name',this.value)"></td>
+            <td><input value="${escapeHtml(item.type)}" onchange="updateItem('bills','${item.id}','type',this.value)"></td>
+            <td><input type="number" step="0.01" value="${item.amount}" onchange="updateItem('bills','${item.id}','amount',this.value)"></td>
+            <td><input type="number" min="1" max="31" value="${item.due || ""}" onchange="updateItem('bills','${item.id}','due',this.value)"></td>
+            <td><button class="mini-btn danger" onclick="deleteItem('bills','${item.id}')">Delete</button></td>
+          </tr>`).join("")}
+        </tbody></table>`;
+    }
+
+    function renderCategories() {
+      if (!data.categories.length) {
+        categoryList.innerHTML = `<div class="empty">No spending buckets entered.</div>`;
+        return;
+      }
+      categoryList.innerHTML = `
+        <table><thead><tr><th>Category</th><th>Budget</th><th>Spent</th><th></th></tr></thead><tbody>
+        ${data.categories.map(item => `
+          <tr>
+            <td><input value="${escapeHtml(item.name)}" onchange="updateItem('categories','${item.id}','name',this.value)"></td>
+            <td><input type="number" step="0.01" value="${item.budget}" onchange="updateItem('categories','${item.id}','budget',this.value)"></td>
+            <td>${money(categorySpent(item.id))}</td>
+            <td><button class="mini-btn danger" onclick="deleteItem('categories','${item.id}')">Delete</button></td>
+          </tr>`).join("")}
+        </tbody></table>`;
+    }
+
+    function renderTransactions() {
+      if (!data.transactions.length) {
+        transactionList.innerHTML = `<div class="empty">No spending transactions entered this month.</div>`;
+        return;
+      }
+      transactionList.innerHTML = `
+        <table><thead><tr><th>Date</th><th>Category</th><th>Amount</th><th>Note</th><th></th></tr></thead><tbody>
+        ${data.transactions.map(item => {
+          const cat = data.categories.find(category => category.id === item.categoryId);
+          return `
+            <tr>
+              <td><input type="date" value="${item.date}" onchange="updateItem('transactions','${item.id}','date',this.value)"></td>
+              <td><select onchange="updateItem('transactions','${item.id}','categoryId',this.value)">${categoryOptionsHtml(item.categoryId)}</select></td>
+              <td><input type="number" step="0.01" value="${item.amount}" onchange="updateItem('transactions','${item.id}','amount',this.value)"></td>
+              <td><input value="${escapeHtml(item.note)}" onchange="updateItem('transactions','${item.id}','note',this.value)"></td>
+              <td><button class="mini-btn danger" onclick="deleteTransaction('${item.id}')">Delete</button></td>
+            </tr>`;
+        }).join("")}
+        </tbody></table>`;
+    }
+
+    function renderDebt() {
+      if (!data.debts.length) {
+        debtList.innerHTML = `<div class="empty">No debts entered.</div>`;
+        return;
+      }
+      debtList.innerHTML = `
+        <table><thead><tr><th>Debt</th><th>Balance</th><th>Payment</th><th>Rate</th><th></th></tr></thead><tbody>
+        ${data.debts.map(item => `
+          <tr>
+            <td><input value="${escapeHtml(item.name)}" onchange="updateItem('debts','${item.id}','name',this.value)"></td>
+            <td><input type="number" step="0.01" value="${item.balance}" onchange="updateItem('debts','${item.id}','balance',this.value)"></td>
+            <td><input type="number" step="0.01" value="${item.payment}" onchange="updateItem('debts','${item.id}','payment',this.value)"></td>
+            <td><input type="number" step="0.01" value="${item.rate || 0}" onchange="updateItem('debts','${item.id}','rate',this.value)"></td>
+            <td><button class="mini-btn danger" onclick="deleteItem('debts','${item.id}')">Delete</button></td>
+          </tr>`).join("")}
+        </tbody></table>`;
+    }
+
+    function renderAssets() {
+      if (!data.assets.length) {
+        assetList.innerHTML = `<div class="empty">No assets entered.</div>`;
+        return;
+      }
+      assetList.innerHTML = `
+        <table><thead><tr><th>Asset</th><th>Value</th><th></th></tr></thead><tbody>
+        ${data.assets.map(item => `
+          <tr>
+            <td><input value="${escapeHtml(item.name)}" onchange="updateItem('assets','${item.id}','name',this.value)"></td>
+            <td><input type="number" step="0.01" value="${item.value}" onchange="updateItem('assets','${item.id}','value',this.value)"></td>
+            <td><button class="mini-btn danger" onclick="deleteItem('assets','${item.id}')">Delete</button></td>
+          </tr>`).join("")}
+        </tbody></table>`;
+    }
+
+    function renderGoals() {
+      if (!data.goals.length) {
+        goalList.innerHTML = `<div class="empty">No goals entered.</div>`;
+        return;
+      }
+      goalList.innerHTML = `
+        <table><thead><tr><th>Goal</th><th>Target</th><th>Saved</th><th>Left</th><th></th></tr></thead><tbody>
+        ${data.goals.map(item => {
+          const left = num(item.target) - num(item.saved);
+          return `
+            <tr>
+              <td><input value="${escapeHtml(item.name)}" onchange="updateItem('goals','${item.id}','name',this.value)"></td>
+              <td><input type="number" step="0.01" value="${item.target}" onchange="updateItem('goals','${item.id}','target',this.value)"></td>
+              <td><input type="number" step="0.01" value="${item.saved}" onchange="updateItem('goals','${item.id}','saved',this.value)"></td>
+              <td class="${left >= 0 ? "yellow" : "green"}">${money(left)}</td>
+              <td><button class="mini-btn danger" onclick="deleteItem('goals','${item.id}')">Delete</button></td>
+            </tr>`;
+        }).join("")}
+        </tbody></table>`;
+    }
+
+    render();
+  </script>
+</body>
+</html>
