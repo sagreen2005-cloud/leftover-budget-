@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LeftOver Budget Command Center</title>
+  <title>Family Budget</title>
   <style>
     :root {
       --bg: #05070a;
@@ -19,6 +19,13 @@
       --blue: #3b82f6;
       --orange: #fb923c;
       --shadow: rgba(0, 0, 0, 0.35);
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     body.light {
@@ -339,19 +346,134 @@
     }
 
     @media (max-width: 650px) {
-      header { align-items: flex-start; flex-direction: column; }
+      body {
+        background: var(--bg);
+      }
+
+      header {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 10px;
+      }
+
       h1 { font-size: 22px; }
-      .big { font-size: 28px; }
-      .tabs { top: 115px; }
-      th, td { font-size: 14px; padding: 8px; }
+      h2 { font-size: 20px; }
+      .big { font-size: 30px; }
+
+      .top-actions {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+      }
+
+      .top-actions button {
+        font-size: 12px;
+        padding: 8px 5px;
+      }
+
+      .tabs {
+        top: 116px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        padding: 8px;
+        overflow: visible;
+      }
+
+      .tab {
+        font-size: 12px;
+        padding: 9px 5px;
+      }
+
+      .spending-shortcut {
+        background: var(--green);
+        color: #04100a;
+        border-color: var(--green);
+      }
+
+      main {
+        padding: 8px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .optional-mobile {
+        display: none;
+      }
+
+      .card {
+        border-radius: 12px;
+        padding: 10px;
+        box-shadow: none;
+      }
+
+      .wide-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .mobile-quick-actions {
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .mobile-spend-button {
+        width: 100%;
+        font-size: 20px;
+        padding: 15px;
+        border-radius: 14px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 7px;
+      }
+
+      th, td { font-size: 14px; padding: 7px; }
       .quick-spend { grid-template-columns: 1fr; }
+
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: 10px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--panel);
+      }
+
+      td {
+        border-bottom: 1px solid var(--border);
+      }
+
+      td:last-child {
+        border-bottom: none;
+      }
+    }
+
+    @media (min-width: 651px) {
+      .mobile-quick-actions {
+        display: none;
+      }
     }
   </style>
 </head>
 <body>
   <header>
     <div>
-      <h1>LeftOver Budget Command Center</h1>
+      <div class="title-row">
+        <h1 id="appTitleDisplay">Family Budget</h1>
+        <button class="mini-btn" onclick="editAppTitle()">Edit Title</button>
+      </div>
       <div class="date-line" id="dateLine"></div>
     </div>
     <div class="top-actions">
@@ -365,9 +487,9 @@
 
   <nav class="tabs">
     <button class="tab active" data-tab="dashboard" onclick="showTab('dashboard', this)">Dashboard</button>
+    <button class="tab spending-shortcut" data-tab="spending" onclick="showTab('spending', this)">Spending</button>
     <button class="tab" data-tab="income" onclick="showTab('income', this)">Income</button>
     <button class="tab" data-tab="bills" onclick="showTab('bills', this)">Bills</button>
-    <button class="tab" data-tab="spending" onclick="showTab('spending', this)">Spending</button>
     <button class="tab" data-tab="debt" onclick="showTab('debt', this)">Debt</button>
     <button class="tab" data-tab="networth" onclick="showTab('networth', this)">Net Worth</button>
     <button class="tab" data-tab="goals" onclick="showTab('goals', this)">Goals</button>
@@ -375,13 +497,16 @@
 
   <main>
     <section id="dashboard" class="section active">
-      <div class="grid">
+      <div class="mobile-quick-actions">
+        <button class="primary mobile-spend-button" onclick="openSpendingTab()">Add Spending</button>
+      </div>
+      <div class="grid dashboard-grid">
         <div class="card"><div class="card-title">Monthly Income</div><div id="dashIncome" class="big green">$0.00</div></div>
-        <div class="card"><div class="card-title">Bills Total</div><div id="dashBills" class="big red">$0.00</div></div>
-        <div class="card"><div class="card-title">Spending Budget</div><div id="dashSpendingBudget" class="big yellow">$0.00</div></div>
+        <div class="card optional-mobile"><div class="card-title">Bills Total</div><div id="dashBills" class="big red">$0.00</div></div>
+        <div class="card optional-mobile"><div class="card-title">Spending Budget</div><div id="dashSpendingBudget" class="big yellow">$0.00</div></div>
         <div class="card"><div class="card-title">Actual Spent</div><div id="dashActualSpent" class="big red">$0.00</div></div>
         <div class="card"><div class="card-title">True Left Over</div><div id="dashLeftOver" class="big green">$0.00</div></div>
-        <div class="card"><div class="card-title">Net Worth</div><div id="dashNetWorth" class="big green">$0.00</div></div>
+        <div class="card optional-mobile"><div class="card-title">Net Worth</div><div id="dashNetWorth" class="big green">$0.00</div></div>
       </div>
 
       <div class="wide-grid" style="margin-top:12px;">
@@ -535,7 +660,8 @@
     const STORAGE_KEY = "greenLeftOverBudgetCommandCenter";
 
     const defaultData = {
-      theme: "dark",
+      theme: "light",
+      appTitle: "Family Budget",
       income: [
         { id: uid(), name: "Primary Paycheck", type: "Regular Paycheck", hours: 0, rate: 0, taxPercent: 0, amount: 0 },
         { id: uid(), name: "OT / Extra", type: "OT", hours: 0, rate: 0, taxPercent: 0, amount: 0 }
@@ -567,6 +693,7 @@
         return {
           ...structuredClone(defaultData),
           ...parsed,
+          appTitle: parsed.appTitle || "Family Budget",
           income: parsed.income || [],
           bills: parsed.bills || [],
           categories: parsed.categories || structuredClone(defaultData.categories),
@@ -614,6 +741,19 @@
     function toggleTheme() {
       data.theme = data.theme === "light" ? "dark" : "light";
       saveData();
+    }
+
+    function editAppTitle() {
+      const title = prompt("App title:", data.appTitle || "Family Budget");
+      if (!title || !title.trim()) return;
+      data.appTitle = title.trim();
+      saveData();
+    }
+
+    function openSpendingTab() {
+      const button = document.querySelector('[data-tab="spending"]');
+      showTab('spending', button);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function applyTheme() {
@@ -870,6 +1010,8 @@
     function render() {
       applyTheme();
       const total = totals();
+      appTitleDisplay.textContent = data.appTitle || "Family Budget";
+      document.title = data.appTitle || "Family Budget";
       dateLine.textContent = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
 
       dashIncome.textContent = money(total.income);
